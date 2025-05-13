@@ -1,6 +1,6 @@
 #include "ismcts.hpp"
 // #include "4T_GST.hpp"
-#include "4T_DATA.hpp"
+// #include "4T_DATA.hpp"
 #include <algorithm>
 #include <chrono>
 #include <limits>
@@ -208,7 +208,7 @@ void ISMCTS::expansion(Node *node, const GST &determinizedState)
         node->children.push_back(std::move(newNode));
     }
 }
-int ISMCTS::simulation(GST& state,DATA& data) {
+int ISMCTS::simulation(GST& state) {
     int moves[MAX_MOVES];
     int moveCount;
     GST simState = state; // 複製狀態，不修改原始數據
@@ -227,27 +227,15 @@ int ISMCTS::simulation(GST& state,DATA& data) {
     // 防止無限循環
     int maxMoves = 1000;
     int moveCounter = 0;
-    bool isMyTurn = true;
     while (!simState.is_over() && moveCounter < maxMoves) {
         moveCount = simState.gen_all_move(moves);
         if (moveCount == 0) break;
-        
-        int move;
 
-        if (isMyTurn) {
-            // 自己：用最高權重
-            move = simState.highest_weight(data);
-        } else {
-            // 敵人：用隨機
-            int randomIndex = dist(rng) % moveCount;
-            move = moves[randomIndex];
-        }
-
+        int randomIndex = dist(rng) % moveCount;
+        int move = moves[randomIndex];
+        // simulationMoves.push_back(move); 
         simState.do_move(move);
         moveCounter++;
-
-        // 換下一個玩家
-        isMyTurn = !isMyTurn;
     }
     
 
@@ -383,7 +371,7 @@ void ISMCTS::printNodeStats(const Node *node, int indent) const
         }
     }
 }
-int ISMCTS::findBestMove(GST& game, DATA& data) {
+int ISMCTS::findBestMove(GST& game) {
     if (game.is_over()) {
         return -1;
     }
@@ -419,7 +407,7 @@ int ISMCTS::findBestMove(GST& game, DATA& data) {
 
         // 一定要進行模擬
         GST simulationState = nodeToSimulate->state;
-        int result = simulation(simulationState,data);
+        int result = simulation(simulationState);
         
         // 反向傳播結果
         backpropagation(nodeToSimulate, result);

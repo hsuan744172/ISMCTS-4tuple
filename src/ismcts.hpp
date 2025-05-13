@@ -8,7 +8,6 @@
 #include <random>
 #include <cmath>
 #include <unordered_map> 
-class DATA;
 class ISMCTS {
 private:
     int simulations;
@@ -18,7 +17,7 @@ private:
 
     void selection(Node*& node);
     void expansion(Node* node, const GST& determinizedState);
-    int simulation(GST& state, DATA& data);
+    int simulation(GST& state);
     void backpropagation(Node* node, double result);
     double calculateUCB(const Node* node) const;
     GST getDeterminizedState(const GST& originalState, int current_iteration);
@@ -32,7 +31,7 @@ private:
 public:
     ISMCTS(int simulations);
     void reset();
-    int findBestMove(GST& game, DATA& data);
+    int findBestMove(GST& game);
     void printNodeStats(const Node* node, int indent = 0) const;
 };
 #endif // ISMCTS_HPP
