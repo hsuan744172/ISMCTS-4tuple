@@ -164,8 +164,8 @@ void MyAI::Print_chessboard()
 
 void MyAI::Generate_move(char* move)
 {
-    // int best_move = ismcts.findBestMove(game,data);
-    int best_move = game.highest_weight(data);
+    int best_move = ismcts.findBestMove(game,data);
+    // int best_move = game.highest_weight(data);
     
     int piece = best_move >> 4;
     int direction = best_move & 0xf;
