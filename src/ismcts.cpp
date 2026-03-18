@@ -340,7 +340,19 @@ int ISMCTS::findBestMove(GST &game, DATA &d) {
             simulationState.do_move(nodeToSimulate->move);
         }
         int result = simulation(simulationState, d);
-
+        
+        // 更新 arrangement_stats
+        std::string arrangementKey;
+        const bool* revealed = game.get_revealed();
+        for (int i = PIECES; i < PIECES*2; i++) {
+            if (!revealed[i]) {
+                int color = determinizedState.get_color(i);
+                arrangementKey += (color == -RED ? 'R' : 'B');
+            }
+        }
+        auto& stats = arrangement_stats[arrangementKey];
+        if (result > 0) stats.first += 1;   // 勝場數
+        stats.second += 1;                  // 模擬次數
         // 反向傳播結果
         backpropagation(nodeToSimulate, result);
     }
